@@ -1,0 +1,43 @@
+#Scaffold ile üretilen kitap görüntülemeleri için bir sayaç modeli oluþturma
+#herhangibir kitapýn show sayfasý görüntülendikçe/yenilendikçe goruntuleme sayýsý bir artacak
+
+rails g model Sayac goruntuleme:integer
+rake db:migrate
+
+#Kitaps controller show metodu
+@x=Sayac.first || Sayac.create(goruntuleme:0)
+    
+@x.goruntuleme+=1
+    
+@x.save
+
+#Kitaps show sayfasý
+<%= Sayac.first.goruntuleme %>
+
+
+
+#Arama sayfasý oluþturmak
+
+rails g controller arama index
+
+#Arama controller index methodu 
+#q deðiþkeni url adres satýrýndan get sorgusu ile aranan deðerleri döndürecek
+@q=params[:q]
+@kitaplar=Kitap.where(isim: @q)  
+
+#Arama index görünümü
+<%@kitaplar.each do |kitap|%>
+ <%= link_to kitap.isim, kitap %> <br/>
+<%end%>
+
+
+#Admin arabirimi (önce Devise kurulacak)
+gem 'activeadmin'  #Gemfile dosyasýna eklenecek
+bundle 
+rails g active_admin:install
+#rails g active_admin:resource Model(Hangi tabloya izin verilecek)
+rails g active_admin:resource kitap
+rake db:migrate
+
+#admin þifresi "rails  c" ortamýnda elle eklenmesi gerekiyor
+ AdminUser.create!(email:"yonetici@yonetim.com", password:'123456', password_confirmation:'123456')
